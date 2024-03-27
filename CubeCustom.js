@@ -29,15 +29,20 @@ showError("this is CubeCustom");
     const vSSC = `#version 300 es
     precision mediump float;
     in vec3 vertexPosition;
-    in vec4 colorValue;
+    // in vec4 colorValue;
     uniform mat4 u_rotateX;
     uniform mat4 u_rotateY;
     uniform mat4 u_rotateZ;
     uniform mat4 u_scale;
+
+	in vec2 fragtexture;
+
     out vec4 varyColor;
     void main() {
         gl_Position = u_scale * u_rotateX * vec4(vertexPosition, 1.0);
-        varyColor = colorValue;
+        // varyColor = colorValue;
+
+	    fragtexture = vtexture;
     }
     `;
 
@@ -56,10 +61,18 @@ showError("this is CubeCustom");
     // Fragment shader source code for pentagon (neon green)
     const fSSCCube = `#version 300 es
     precision mediump float;
-    in vec4 varyColor;
+    // in vec4 varyColor;
+    // out vec4 outColor;
+
+	in vec2 fragtexture;
+    uniform sampler2D fragsampler;
     out vec4 outColor;
+
+	uniform sampler2D fragsampler;
+
     void main() {
-        outColor = vec4(varyColor); 
+        // outColor = vec4(varyColor); 
+        outColor = texture(fragsampler, fragtexture);
     }`;
 
     // Create fragment shader
@@ -227,6 +240,43 @@ showError("this is CubeCustom");
         0.25, 0.25, 0.25, 1
     ]
     var theta = 0;
+
+    //START TEXTURE CODE
+
+    let image = new Image();
+    image.src = "/textures/ARCH2.png";
+    perspective(projection, 75 * Math.PI / 180, canvas.width / canvas.height, 0.1, 10000);    
+
+    var texCoords = new Float32Array([
+        //front
+        1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0,
+        //back
+        0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0,
+        //top
+        1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1,
+        //bottom
+        1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0,
+        //left
+        1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1,
+        //right
+        0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1,
+    ]);
+
+	const texCoordBuffer = webgl.createBuffer(); 
+    webgl.bindBuffer(webgl.ARRAY_BUFFER, texCoordBuffer);
+	webgl.bufferData(webgl.ARRAY_BUFFER, texCoords,webgl.STATIC_DRAW); 
+
+    const texturebuffer = webgl.createTexture();
+    webgl.bindTexture(webgl.TEXTURE_2D, texturebuffer);
+    /*  if your dimensions are not powers of two then comment out line 143 and uncomment 137-140	*/
+    webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+    webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+    webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, webgl.CLAMP_TO_EDGE);
+    webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, webgl.CLAMP_TO_EDGE);
+
+    webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGBA, webgl.RGBA, webgl.UNSIGNED_BYTE, image);
+    //webgl.generateMipmap(webgl.TEXTURE_2D);
+
     function draw() {
 
         gl.clearColor(0.1, 0.3, 0.3, 1);

@@ -12,12 +12,11 @@
         </canvas>
         <br/>
 
-<!--    <button type="button" id="btnStartStop" class="button">Move</button>
+        <!-- <button type="button" id="btnStartStop" class="button">Move</button> -->
         <button type="button" id="btnZLock" class="button">Z Lock</button>
         <button type="button" id="btnYLock" class="button">Y Lock</button>
         <button type="button" id="btnXLock" class="button">X Lock</button>
-        <button type="button" id="btnReset" class="button">Reset</button>
--->    
+        <!-- <button type="button" id="btnReset" class="button">Reset</button> -->
         <div id="error-box">
             <span class="error-box-title">Error messages, if any, go in here.</span>
         </div>
@@ -31,7 +30,7 @@
         <script type="module">
             window.onload = function() {
                 var urlParams = new URLSearchParams(window.location.search);
-                var scriptName = urlParams.get("script") || 'Texture.js';
+                var scriptName = urlParams.get("script") || 'Texture';
                 var script = document.createElement("script");
                 script.src = scriptName + '.js';
                 document.body.appendChild(script);

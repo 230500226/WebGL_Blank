@@ -1,4 +1,4 @@
-const canvas = document.querySelector(`canvas`);
+const canvas = document.getElementById(`IDcanvas`);
 const webgl = canvas.getContext(`webgl`);
 
 if(!webgl)
@@ -13,9 +13,9 @@ else{
 	let view = createmat4();
 	let projection = createmat4();
 	let start = true;
-  let image = document.getElementById("flag");
-  /* or let image = new Image();
-  image.src ="/textures/saflag.png";  */
+  // let image = document.getElementById("flag");
+  let image = new Image();
+  image.src ="/textures/ARCH2.png";
 	perspective(projection, 75 * Math.PI/180,  canvas.width/canvas.height, 0.1,  10000 );    
  	
 	var vertices = new Float32Array([
@@ -205,6 +205,55 @@ translate(model, model, [0, 0, -1]);
 translate(view, view, [0, 0, 1]);
 invert(view, view);
 
+idMatix = [
+  1,0,0,0,
+  0,1,0,0,
+  0,0,1,0,
+  0,0,0,1
+]
+
+function matrotateX(matrix, theta){
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    const result = matrix.slice();
+    result[5] = cosTheta * matrix[5] - sinTheta * matrix[9];
+    result[6] = sinTheta * matrix[5] + cosTheta * matrix[9];
+    result[9] = -sinTheta * matrix[5] + cosTheta * matrix[9];
+    result[10] = cosTheta * matrix[5] + sinTheta * matrix[9];
+    return result;
+}
+
+function matrotateY(matrix, theta) {
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    const result = matrix.slice(); // Create a copy of the matrix to modify the result
+    // Apply the rotation transformation
+    result[0] = cosTheta * matrix[0] + sinTheta * matrix[2];
+    result[2] = -sinTheta * matrix[0] + cosTheta * matrix[2];
+    result[8] = cosTheta * matrix[8] + sinTheta * matrix[10];
+    result[10] = -sinTheta * matrix[8] + cosTheta * matrix[10];
+    return result;
+}
+
+function matrotateZ(matrix, theta){
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    const result = matrix.slice();
+    result[0] = cosTheta * matrix[0] - sinTheta * matrix[1];
+    result[1] = sinTheta * matrix[0] + cosTheta * matrix[1];
+    result[4] = cosTheta * matrix[4] - sinTheta * matrix[5];
+    result[5] = sinTheta * matrix[4] + cosTheta * matrix[5];
+    return result;
+}
+
+var brotateX = false;
+var brotateY = false;
+var brotateZ = false;
+
+document.getElementById('btnXLock').addEventListener('click', () => brotateX = !brotateX);
+document.getElementById('btnYLock').addEventListener('click', () => brotateX = !brotateY);
+document.getElementById('btnZLock').addEventListener('click', () => brotateX = !brotateZ);
+
 draw();
 function draw()
 {    
@@ -212,7 +261,10 @@ function draw()
     webgl.bindTexture(webgl.TEXTURE_2D,texturebuffer);
 	webgl.activeTexture(webgl.TEXTURE0);
 
-	if(start){	rotateY(model, model,0.01);}
+	if(start){	rotateY(model, model,0.0);}
+  if (brotateX) { model = matrotateX(model, 0.01); }
+  if (brotateY) { model = matrotateY(model, 0.01); }
+  if (brotateZ) { model = matrotateZ(model, 0.01); }
 	webgl.uniformMatrix4fv(projLocation, false, projection);
 	webgl.uniformMatrix4fv(viewLocation, false, view);
 	webgl.uniformMatrix4fv(modelLocation, false, model);
