@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to HTML</title>
+  </head>
+  <body>
+    <canvas
+      id="mycanv"
+      width="600"
+      height="600"
+      style="background-color: rgb(244, 244, 248); border: 2px solid black"
+    ></canvas>
+    <button>Stop/Start</button>
+    <script id="vs" type="notjs">
+        attribute vec2 pos;
+      attribute vec3 colours;
+      varying vec3 fragcolours;
+      float x;
+      float y;
+      uniform float angle;
+      //float angle = 0.5;//3.141592/2.0;
+      void main() {
+          //x = pos.x*cos(phi) + pos.y*sin(phi);
+          //y = pos.y*cos(phi) - pos.x*sin(phi);
+          x = pos.x*cos(angle) -pos.y*sin(angle);
+          y = pos.x*sin(angle) +pos.y*cos(angle);
+          gl_Position = vec4(x,y,0,1) ;//
+          fragcolours = colours;  }
+    </script>
+    <script id="fs" type="notjs">
+         precision mediump float;
+      varying vec3 fragcolours;
+       void main() {
+           gl_FragColor = vec4(fragcolours,1.0); }
+    </script>
+
+    <!-- <script src="mainStructure2.js"></script> -->
+    <!-- <script src="mainStructure.js"></script> -->
+    <!-- <script src="main.js"></script> -->
+    <script src="intrototexture.js"></script>
+  </body>
+</html>
